@@ -19,7 +19,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb+srv://Piyush:g3H0f79PdTnlHRg4@cluster0.uleuvk4.mongodb.net/blogDB");
+mongoose.connect("mongodb+srv://Piyush:g3H0f79PdTnlHRg4@cluster0.uleuvk4.mongodb.net/ blogDB");
 
 const blogSchema = new mongoose.Schema({
   title:{
