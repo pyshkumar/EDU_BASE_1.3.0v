@@ -8,9 +8,7 @@ const mongoose = require("mongoose");
 
 const homeStartingContent = "To-do lists are essential if you're going to beat work overload. When you don't use them effectively, you'll appear unfocused and unreliable to the people around you.";
 
-const aboutContent = "The Key to Efficiency Do you often feel overwhelmed by the amount of work you have to do? Do you find yourself missing deadlines? Or do you sometimes just forget to do something important, so that people have to chase you to get work done?
-all of these are symptoms of not keeping a proper To Do List. These are prioritized lists of all the tasks that you need to carry out. they list everything that you have to do, with the most important tasks at the top of the list, and the least important tasks at the bottom.
-by keeping such a list, you make sure that your tasks are written down all in one place so you don t forget anything important. and by prioritizing tasks, you plan the order in which you ll do them, so that you can tell what needs your immediate attention, and what you can leave until later.";
+const aboutContent = "The Key to Efficiency Do you often feel overwhelmed by the amount of work you have to do? Do you find yourself missing deadlines? Or do you sometimes just forget to do something important, so that people have to chase you to get work "
 
 const contactContent = "Have a difficulty ? We will get to. Kindly drop your credentails for the same.";
 
