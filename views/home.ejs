@@ -1,19 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
 
-<%- include("partials/header"); -%>
-    <h1>Home</h1>
-    <p> <%= startingContent %> </p>
+<head>
+  <meta charset="utf-8">
+  <title>EDU_BASE</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <nav class="navbar navbar-default">
+    <div class="container">
+      <div class="navbar-header">
+        <p class="navbar-brand">ZELOTH</p>
+      </div>
+        <ul class="nav navbar-nav navbar-right">
+        </ul>
+    </div>
+  </nav>
 
+  <body>
+    <div class="container">
 
-  <%  posts.forEach(function(post){ %>
+<div class="jumbotron centered">
+  <div class="container">
+    <i class="fas fa-key fa-6x"></i>
+<p class="lead">Welcome To</p>
+    <h1 class="display-3">EDU_BASE</h1>
 
-    <h1><%=post.title%></h1>
-    <p>
-    <%=post.content.substring(0, 100) + " ..."%>
-    <a href="/posts/<%=post.title%>">Read More</a>
-    </p>
+    <hr>
+    <a class="btn btn-light btn-lg" href="/register" role="button">Register</a>
+    <a class="btn btn-dark btn-lg" href="/login" role="button">Login</a>
 
+  </div>
+</div>
 
-    <% }) %>
-
-
-<%- include("partials/footer"); -%>
+<%- include('partials/footer') %>
