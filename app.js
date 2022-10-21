@@ -3,36 +3,52 @@ require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
-const _ = require("lodash");
+
+
 const mongoose = require("mongoose");
-const encrypt =require("mongoose-encryption");
+mongoose.connect("mongodb://localhost:27017/minor")
+var db=mongoose.connection;
+db.on('error', console.log.bind(console, "connection error"));
+db.once('open', function(callback){
+    console.log("connection succeeded");
+})
 
-const homeStartingContent = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum";
-
-const aboutContent = "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of de Finibus Bonorum et Malorum (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, Lorem ipsum dolor sit ame, comes from a line in section 1.10.32. "
-
+    
 
 
 const contactContent = "Phone Number: 918098776";
 
 const app = express();
-console.log(process.env.API_KEY);
+
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb+srv://Piyush:Kpiyush113@cluster0.uleuvk4.mongodb.net/blogDB");
 
 
+
+
+
+//question/answer schema
+const questionSchema = new mongoose.Schema({
+  question:String,
+  author:String,
+  answer:{
+
+   giver:String,
+   ans:String
+
+  }
+});
+const Ques=mongoose.model("Ques",questionSchema);
 
 const userSchema=new mongoose.Schema({
+ 
   email:String,
   password:String
 });
 
-
-userSchema.plugin(encrypt,{secret:process.env.SECRET, encryptedFields:["password"] });
 
 const User = mongoose.model("User",userSchema);
 
@@ -48,22 +64,28 @@ const blogSchema = new mongoose.Schema({
 const Blog = mongoose.model("Blog",blogSchema);
 
 app.post("/register",function(req,res){
-  const newUser= new User({
+
+  var mail =req.body.email;
+  var pass = req.body.password;
+  
+  
+
+  var data = {
     email:req.body.username,
     password:req.body.password
-  });
+      
+  }
+db.collection('users').insertOne(data,function(err, collection){
+      if (err) throw err;
+      console.log("Record inserted Successfully");
+            res.render("login");
+  });  
+});
 
 
-  newUser.save(function(err){
-    if(err){
-      console.log(err);
-    }
-    else
-    {
-      res.redirect("/front");//to the home page
-    }
-  })
-})
+
+
+
 
 app.get("/register", function(req, res){
   res.render("register");
@@ -74,27 +96,31 @@ app.get("/login", function(req, res){
 });
 
 
-app.post("login",function(req,res){
-  const username=req.body.username;
-  const password=req.body.password;
+app.post("/login",function(req,res){
+  const Username=req.body.username;
+  const Password=req.body.password;
 
-  User.findOne({email:username},function(err,foundUser){
-    if(err)
+
+  var req_userData=User.findOne({email: Username});
+
+console.log("fetched data is"+req_userData._id);
+
+    if(req_userData.password==Password)
     {
-      console.log(err)
+      res.send("login succesful");
+
+        //res.redirect("");                 //takes to welcome page
     }
-    else
-    {
-      if(foundUser)
-       {
-         if(foundUser.password==password)
-         {
-           res.redirect("/front");
-         }
-       }
+    else{
+        res.send("either of the entries are incorrect try again,else if new user hit the signup button");
+        
+                    
     }
-  })
-})
+    
+    });
+    
+    
+    
 // HOME GET
 app.get("/", function(req, res){
   res.render("home");
