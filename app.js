@@ -3,27 +3,58 @@ require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
-
-
 const mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost:27017/minor")
+const session=require('express-session');
+const passport=require("passport");
+const passportLocalMongoose=require("passport-local-mongoose");
+const app = express();
+const findOrCreate = require('mongoose-findorcreate');
+
+app.use(express.static("public"));
+app.set('view engine', 'ejs');
+
+app.use(bodyParser.urlencoded({extended: true}));
+
+app.use(session({
+  secret: "new secret.",
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+
+
+mongoose.connect("mongodb://localhost:27017/minor", {useNewUrlParser: true});
+
 var db=mongoose.connection;
 db.on('error', console.log.bind(console, "connection error"));
 db.once('open', function(callback){
     console.log("connection succeeded");
-})
+});
+
+
+
+
+
+
+
+const homeStartingContent = "To-do lists are essential if you're going to beat work overload. When you don't use them effectively, you'll appear unfocused and unreliable to the people around you.";
+
+const aboutContent = "The Key to Efficiency Do you often feel overwhelmed by the amount of work you have to do? Do you find yourself missing deadlines? Or do you sometimes just forget to do something important, so that people have to chase you to get work "
+
+
+
+
 
     
 
 
 const contactContent = "Phone Number: 918098776";
 
-const app = express();
 
-app.set('view engine', 'ejs');
-
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static("public"));
 
 
 
@@ -48,9 +79,31 @@ const userSchema=new mongoose.Schema({
   email:String,
   password:String
 });
-
+userSchema.plugin(passportLocalMongoose);
+userSchema.plugin(findOrCreate);
 
 const User = mongoose.model("User",userSchema);
+
+passport.use(User.createStrategy());
+
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
+
+
+
+
+
+
+
+
 
 const blogSchema = new mongoose.Schema({
   title:{
@@ -63,25 +116,22 @@ const blogSchema = new mongoose.Schema({
 
 const Blog = mongoose.model("Blog",blogSchema);
 
-app.post("/register",function(req,res){
 
-  var mail =req.body.email;
-  var pass = req.body.password;
-  
-  
 
-  var data = {
-    email:req.body.username,
-    password:req.body.password
-      
-  }
-db.collection('users').insertOne(data,function(err, collection){
-      if (err) throw err;
-      console.log("Record inserted Successfully");
-            res.render("login");
-  });  
+app.post("/register", function(req, res){
+
+  User.register({username: req.body.username}, req.body.password, function(err, user){
+    if (err) {
+      console.log(err);
+      res.redirect("/register");
+    } else {
+      passport.authenticate("local")(req, res, function(){
+        res.send("register succesful");
+      });
+    }
+  });
+
 });
-
 
 
 
@@ -96,30 +146,26 @@ app.get("/login", function(req, res){
 });
 
 
-app.post("/login",function(req,res){
-  const Username=req.body.username;
-  const Password=req.body.password;
 
+app.post("/login", function(req, res){
 
-  var req_userData=User.findOne({email: Username});
+  const user = new User({
+    username: req.body.username,
+    password: req.body.password
+  });
 
-console.log("fetched data is"+req_userData._id);
-
-    if(req_userData.password==Password)
-    {
-      res.send("login succesful");
-
-        //res.redirect("");                 //takes to welcome page
+  req.login(user, function(err){
+    if (err) {
+      console.log(err);
+    } else {
+      passport.authenticate("local")(req, res, function(){
+        res.redirect("/secrets");
+      });
     }
-    else{
-        res.send("either of the entries are incorrect try again,else if new user hit the signup button");
-        
-                    
-    }
-    
-    });
-    
-    
+  });
+
+});
+
     
 // HOME GET
 app.get("/", function(req, res){
@@ -178,30 +224,7 @@ app.post("/compose", function(req, res){
 });
 
 
-//DISPLAYING Q&A discretelty
-app.get("/posts/:postName", function(req, res){
 
-  const requestedTitle = _.capitalize(req.params.postName);
-
-   Blog.findOne({title:requestedTitle}, function(err,blogItem){
-
-   if(!err){
-
-    if(blogItem)
-    {
-      res.render("post", {title: blogItem.title, content: blogItem.content});
-    }
-
-   else{
-         console.log("NOT FOUND");
-       }
-  }
-  else{
-    console.log(err);
-  }
-});
-
-});
 
 //PORT USED AS SERVER
 // const port = process.env.PORT || 3000;
