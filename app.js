@@ -126,7 +126,7 @@ app.post("/register", function(req, res){
       res.redirect("/register");
     } else {
       passport.authenticate("local")(req, res, function(){
-        res.send("register succesful");
+        res.redirect("/login");
       });
     }
   });
@@ -159,7 +159,7 @@ app.post("/login", function(req, res){
       console.log(err);
     } else {
       passport.authenticate("local")(req, res, function(){
-        res.redirect("/secrets");
+        res.redirect("/front");
       });
     }
   });
@@ -176,28 +176,55 @@ app.get("/", function(req, res){
 //previosly home
 app.get("/front", function(req, res){
 
-  Blog.find(function(err,blogItems){
-  if(!err){
-
-      res.render("front", {
-        startingContent: homeStartingContent,
-        posts:blogItems
-        });
-
-  }
-  else{
-    console.log(err);
+  if (req.isAuthenticated()){
+    Blog.find(function(err,blogItems){
+      if(!err){
+    
+          res.render("front", {
+            startingContent: homeStartingContent,
+            posts:blogItems
+            });
+    
       }
+      else{
+        console.log(err);
+          }
+    
+    });
 
+
+  } else {
+    res.redirect("/login");
+  }
+
+
+ 
 });
+
+app.get("/logout", function(req, res){
+  req.logout();
+  res.redirect("/");
 });
+
 
 app.get("/about", function(req, res){
-  res.render("about", {aboutContent: aboutContent});
+
+  if (req.isAuthenticated()){
+    res.render("about", {aboutContent: aboutContent});
+  } else {
+    res.redirect("/login");
+  }
+  
 });
 
 app.get("/contact", function(req, res){
-  res.render("contact", {contactContent: contactContent});
+
+  if (req.isAuthenticated()){
+    res.render("contact", {contactContent: contactContent});
+  } else {
+    res.redirect("/login");
+  }
+  
 });
 
 
