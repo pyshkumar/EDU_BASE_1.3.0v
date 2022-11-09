@@ -2,8 +2,10 @@ require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
-const _ = require("lodash");
+
+
 const mongoose = require("mongoose");
+<<<<<<< HEAD
 const session = require("express-session");
 const passport=require("passport");
 const passportLocalMongoose=require("passport-local-mongoose");
@@ -17,11 +19,29 @@ const aboutContent = "Contrary to popular belief, Lorem Ipsum is not simply rand
 const contactContent = "Phone Number: 918098776";
 
 const app = express();
+=======
+mongoose.connect("mongodb://localhost:27017/minor")
+var db=mongoose.connection;
+db.on('error', console.log.bind(console, "connection error"));
+db.once('open', function(callback){
+    console.log("connection succeeded");
+})
+
+    
+
+
+const contactContent = "Phone Number: 918098776";
+
+const app = express();
+
+app.set('view engine', 'ejs');
+>>>>>>> 077e6a47c619573a5e15cc9588409642a8f7b03c
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
+<<<<<<< HEAD
 app.use(session({
   secret:"myexisbitch",
   resave:false,
@@ -32,6 +52,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 mongoose.connect("mongodb+srv://Piyush:Kpiyush113@cluster0.uleuvk4.mongodb.net/blogDB");
+=======
+>>>>>>> 077e6a47c619573a5e15cc9588409642a8f7b03c
 
 //************************************************** SCHEMA'S***************************//
 
@@ -47,17 +69,39 @@ mongoose.connect("mongodb+srv://Piyush:Kpiyush113@cluster0.uleuvk4.mongodb.net/b
 //   }[]
 // });
 
+
+
+//question/answer schema
+const questionSchema = new mongoose.Schema({
+  question:String,
+  author:String,
+  answer:{
+
+   giver:String,
+   ans:String
+
+  }
+});
+const Ques=mongoose.model("Ques",questionSchema);
+
 const userSchema=new mongoose.Schema({
+<<<<<<< HEAD
   name:String,
   phone_nr:Number,
+=======
+ 
+>>>>>>> 077e6a47c619573a5e15cc9588409642a8f7b03c
   email:String,
   password:String,
   occupation:String,
   googleId:{ type: String, default: 'NULL' }
 });
 
+<<<<<<< HEAD
 userSchema.plugin(passportLocalMongoose);
 userSchema.plugin(findOrCreate);
+=======
+>>>>>>> 077e6a47c619573a5e15cc9588409642a8f7b03c
 
 const User = mongoose.model("User",userSchema);
 
@@ -132,9 +176,33 @@ const Blog = mongoose.model("Blog",blogSchema);
 // ---=====================
 
 app.post("/register",function(req,res){
+<<<<<<< HEAD
+=======
+
+  var mail =req.body.email;
+  var pass = req.body.password;
+  
+  
+
+  var data = {
+    email:req.body.username,
+    password:req.body.password
+      
+  }
+db.collection('users').insertOne(data,function(err, collection){
+      if (err) throw err;
+      console.log("Record inserted Successfully");
+            res.render("login");
+  });  
+});
+
+
+
+>>>>>>> 077e6a47c619573a5e15cc9588409642a8f7b03c
 
 User.register({username:req.body.username}, req.body.password, function(err, user){
 
+<<<<<<< HEAD
   if(err)
   {
     console.log(err);
@@ -168,6 +236,8 @@ app.get("/profile", function(req, res){
 
 
 });
+=======
+>>>>>>> 077e6a47c619573a5e15cc9588409642a8f7b03c
 
 app.get("/register", function(req, res){
 
@@ -182,6 +252,7 @@ app.get("/login", function(req, res){
 
 
 app.post("/login",function(req,res){
+<<<<<<< HEAD
 
   const user = new User({
     username:req.body.username,
@@ -229,6 +300,33 @@ req.login(user,function(err){
   // })
 });
 
+=======
+  const Username=req.body.username;
+  const Password=req.body.password;
+
+
+  var req_userData=User.findOne({email: Username});
+
+console.log("fetched data is"+req_userData._id);
+
+    if(req_userData.password==Password)
+    {
+      res.send("login succesful");
+
+        //res.redirect("");                 //takes to welcome page
+    }
+    else{
+        res.send("either of the entries are incorrect try again,else if new user hit the signup button");
+        
+                    
+    }
+    
+    });
+    
+    
+    
+// HOME GET
+>>>>>>> 077e6a47c619573a5e15cc9588409642a8f7b03c
 app.get("/", function(req, res){
 
   res.render("home");
