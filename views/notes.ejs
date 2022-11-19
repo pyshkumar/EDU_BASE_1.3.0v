@@ -1,0 +1,28 @@
+
+
+
+
+
+<h1>NOTES </h1>
+
+<% notes.forEach(function(note) { %>
+  <div class="">
+    <h4>TITLE :</h4>
+<p><%= note.title %></p>
+  </div>
+  <div class="">
+  <h4>DESCRIPTION :</h4>
+    <p> <%= note.description %></p>
+  </div>
+  <h4>CATEGORY :</h4>
+  <div>
+    <p> <%= note.category.title %></p>
+  </div>
+<div class="">
+</div>
+<div class="">
+  <p>
+  <a href="/notes/<%=note.title %>">READ MORE</a>
+   </p>
+</div>
+<% }) %>

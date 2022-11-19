@@ -1,6 +1,34 @@
-<%- include("partials/header"); -%>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
 
-  <h1><%=title%></h1>
-  <p><%=content%></p>
+<head>
+  <meta charset="utf-8">
+  <title>EDU_BASE</title>
+  <meta charset="utf-8">
+  <script src="https://kit.fontawesome.com/805ebae564.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/bootstrap-social.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <nav class="navbar navbar-default">
+    <div class="container">
+      <div class="navbar-header">
+        <p class="navbar-brand">EDU_BASE</p>
+      </div>
+        <ul class="nav navbar-nav navbar-right">
+          <li id="front"><a href="/front">HOME</a></li>
+            <li id="front"><a href="/blog">BLOGS</a></li>
+          <li id="about"><a href="/logout">LOGOUT</a></li>
+        </ul>
+    </div>
+  </nav>
 
-<%- include("partials/footer"); -%>
+  <body>
+    <div class="container">
+
+<!-- //////////////////////////////////////////////////////////////////////// -->
+<h2>Username:<%= username %></h2>
+
+<h1><%= title %> </h1>
+<p><%= content %>  </p>
+<p><%= doc %>  </p>
+<%- include("partials/footer.ejs") %>

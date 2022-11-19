@@ -16,7 +16,7 @@
       </div>
         <ul class="nav navbar-nav navbar-right">
           <li id="front"><a href="/front">HOME</a></li>
-            <li id="front"><a href="/blog">BLOGS</a></li>
+            <li id="front"><a href="/compose">Compose a Blog</a></li>
           <li id="about"><a href="/logout">LOGOUT</a></li>
         </ul>
     </div>
@@ -26,20 +26,33 @@
     <div class="container">
 
 <!-- //////////////////////////////////////////////////////////////////////// -->
+<h1>BLOGS </h1>
 
-<h1>COMPOSE</h1>
-<form class="" action="/compose" method="post">
-  <div class="form-group">
-
-
-  <label>TITLE</label>
-  <input class="form-control" type="text" name="posttitle" value="" placeholder="TITLE" autocomplete="off">
-  <label>POSTS</label>
-  <textarea class="form-control" name="postcom" rows="2" cols="15" placeholder="post" autocomplete="off"></textarea>
-
+<% post.forEach(function(posts) { %>
+  <div class="">
+    <h4>TITLE :</h4>
+<p><%= posts.title %></p>
   </div>
-    <button class="btn btn-primary" type="submit" name="publish">PUBLISH</button>
-    <!-- <label>DATE</label>
-    <input class="form-control" type="text" name="postusername" value="" placeholder="TITLE" autocomplete="off">  -->
-</form>
+  <div class="">
+  <h4>AUTHOR :</h4>
+    <p> <%= posts.username %></p>
+  </div>
+<div class="">
+  <p><%= posts.content.substring(0,100)+"..." %>
+</div>
+<div class="">
+  <a href="/posts/<%=posts.title %>">READ MORE</a>
+   </p>
+</div>
+<div class="">
+   <p>Date:<%= posts.doc %>  </p>
+</div>
+
+ <p>Date:<%= posts.doc %>  </p>
+<% }) %>
+
+
+<% for(var i=0;i<post.length;i++){ %>
+<% console.log(post[i].title) %>
+<% } %>
 <%- include("partials/footer.ejs") %>

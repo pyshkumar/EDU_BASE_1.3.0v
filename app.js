@@ -2,15 +2,13 @@ require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
-
-
+const _ = require("lodash");
 const mongoose = require("mongoose");
-<<<<<<< HEAD
 const session = require("express-session");
-const passport=require("passport");
-const passportLocalMongoose=require("passport-local-mongoose");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const findOrCreate = require('mongoose-findorcreate');
+const findOrCreate = require("mongoose-findorcreate");
 
 const homeStartingContent = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum";
 
@@ -19,96 +17,200 @@ const aboutContent = "Contrary to popular belief, Lorem Ipsum is not simply rand
 const contactContent = "Phone Number: 918098776";
 
 const app = express();
-=======
-mongoose.connect("mongodb://localhost:27017/minor")
-var db=mongoose.connection;
-db.on('error', console.log.bind(console, "connection error"));
-db.once('open', function(callback){
-    console.log("connection succeeded");
-})
-
-    
-
-
-const contactContent = "Phone Number: 918098776";
-
-const app = express();
 
 app.set('view engine', 'ejs');
->>>>>>> 077e6a47c619573a5e15cc9588409642a8f7b03c
-
-app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use(express.static("public"));
 
-<<<<<<< HEAD
 app.use(session({
-  secret:"myexisbitch",
-  resave:false,
-  saveUninitialized:false
+  secret: "myexisbitch",
+  resave: false,
+  saveUninitialized: false
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb+srv://Piyush:Kpiyush113@cluster0.uleuvk4.mongodb.net/blogDB");
-=======
->>>>>>> 077e6a47c619573a5e15cc9588409642a8f7b03c
+mongoose.connect("mongodb://localhost:27017/blogdb1",{useNewUrlParser:true});
+const categoryschema={
+  title:String
+};
+const Category = mongoose.model('Category',categoryschema);
+const noteschema={
+  title:String,
+  description:String,
+category :{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:'Category'
+  }
+}
+
+const Note=mongoose.model("Note",noteschema);
+app.get("/notes",function(req,res)
+{
+  Note.find({}).populate('category').exec(function(err,notes)
+{
+    res.render("notes",{notes:notes});
+})
+})
+app.get("/newnote",function(req,res)
+{
+  Category.find({},function(err,c)
+  {
+    if (c) {console.log("Present categories", c);} else {console.log("Not present");}
+  for(var i=0;i<c.length;i++){
+   console.log(c[i])
+   }
+    res.render("newnote",{categories:c});
+  }
+)
+})
+app.post("/notes",function (req,res)
+{
+  console.log("this is catoegory fetching  : ",req.body.category_id);
+
+  const note=new Note({
+    title:req.body.title,
+    description:req.body.description,
+    category:req.body.category_id
+  })
+  note.save(function(err)
+{
+  if(!err)
+  {
+    res.redirect("/notes");
+  }
+})
+})
+const person = {
+  email: "NULL",
+  googleId: "NULL",
+  id: "NULL"
+};
+
+const ques = {
+  id: "NULL"
+};
 
 //************************************************** SCHEMA'S***************************//
+const postSchema = {
+  title: String,
+  username: String,
+  content: String,
+  doc: {
+    type: Date,
+    default: Date.now
+  }
+};
 
-//question/answer schema
-// const questionSchema = new mongoose.Schema({
-//   question:String,
-//   author:String,
-//   answer:{
-//
-//    giver:String,
-//    ans:String
-//
-//   }[]
-// });
-
-
-
-//question/answer schema
-const questionSchema = new mongoose.Schema({
-  question:String,
-  author:String,
-  answer:{
-
-   giver:String,
-   ans:String
-
+const blogSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  content: String,
+  doc: {
+    type: Date,
+    default: Date.now
   }
 });
-const Ques=mongoose.model("Ques",questionSchema);
 
-const userSchema=new mongoose.Schema({
-<<<<<<< HEAD
-  name:String,
-  phone_nr:Number,
-=======
- 
->>>>>>> 077e6a47c619573a5e15cc9588409642a8f7b03c
-  email:String,
-  password:String,
-  occupation:String,
-  googleId:{ type: String, default: 'NULL' }
+
+
+const questionSchema = new mongoose.Schema({
+  question: {
+    type: String,
+    default: 'NULL'
+  },
+  ask_id: {
+    type: String,
+    default: 'NULL'
+  },
+  doc: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-<<<<<<< HEAD
+
+const answerSchema = new mongoose.Schema({
+  answer: {
+    type: String,
+    default: 'NULL'
+  },
+  question_id: {
+    type: String,
+    default: 'NULL'
+  },
+  answerer_id: {
+    type: String,
+    default: 'NULL'
+  },
+  doc: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const userSchema = new mongoose.Schema({
+  fname: {
+    type: String,
+    default: 'NULL'
+  },
+  lname: {
+    type: String,
+    default: 'NULL'
+  },
+  phone_nr: {
+    type: String,
+    default: 'NULL'
+  },
+  email: {
+    type: String,
+    unique: true,
+    default: 'NULL'
+  },
+  username: {
+    type: String,
+    default: 'NULL'
+  },
+  password: {
+    type: String,
+    default: 'NULL'
+  },
+  occupation: {
+    type: String,
+    default: 'NULL'
+  },
+  address: {
+    type: String,
+    default: 'NULL'
+  },
+  googleId: {
+    type: String,
+    default: 'NULL'
+  },
+  doj: {
+    type: Date,
+    default: Date.now
+  }
+});
+
 userSchema.plugin(passportLocalMongoose);
 userSchema.plugin(findOrCreate);
-=======
->>>>>>> 077e6a47c619573a5e15cc9588409642a8f7b03c
 
-const User = mongoose.model("User",userSchema);
+const User = mongoose.model("User", userSchema);
+const Answer = mongoose.model("Answer", answerSchema);
+const Question = mongoose.model("Question", questionSchema);
+const Post = mongoose.model("POST", postSchema);
+const Blog = mongoose.model("Blog", blogSchema);
 
-// use static authenticate method of model in LocalStrategy
 passport.use(User.createStrategy());
 
-// use static serialize and deserialize of model for passport session support
+
 passport.serializeUser(function(user, cb) {
   process.nextTick(function() {
     return cb(null, {
@@ -129,335 +231,410 @@ passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     callbackURL: "http://localhost:3000/auth/google/secrets",
-    userProfileURL:"https://www.googleapis.com/oauth2/v3/userinfo"
+    userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
   },
   function(accessToken, refreshToken, profile, cb) {
-    console.log(profile);
-    User.findOrCreate({ googleId: profile.id }, function (err, user) {
+    person.googleId = profile.id;
+    User.findOrCreate({
+      googleId: profile.id
+    }, function(err, user) {
       return cb(err, user);
     });
   }
 ));
 
-const blogSchema = new mongoose.Schema({
-  title:{
-    type:String,
-    unique:true,
-    required: true
-  },
-  content:String
-});
+////////////////////////////////////////////Routing//////////////////////////
 
-const Blog = mongoose.model("Blog",blogSchema);
+//////////////////////////////////PROFILE///////////////////////////////////
 
+app.get("/profile", function(req, res) {
 
-
-//*****************************OLD REGISTER PAGE************************//
-// app.post("/register",function(req,res){
-//
-//   const hash = bcrypt.hashSync(req.body.password, saltRounds);
-//
-//   const newUser= new User({
-//     email:req.body.username,
-//     password:hash
-//   });
-//
-//
-//   newUser.save(function(err){
-//     if(err){
-//       console.log(err);
-//     }
-//     else
-//     {
-//       res.redirect("/front");//to the home page
-//     }
-//   })
-// })
-// ---=====================
-
-app.post("/register",function(req,res){
-<<<<<<< HEAD
-=======
-
-  var mail =req.body.email;
-  var pass = req.body.password;
-  
-  
-
-  var data = {
-    email:req.body.username,
-    password:req.body.password
-      
-  }
-db.collection('users').insertOne(data,function(err, collection){
-      if (err) throw err;
-      console.log("Record inserted Successfully");
-            res.render("login");
-  });  
-});
-
-
-
->>>>>>> 077e6a47c619573a5e15cc9588409642a8f7b03c
-
-User.register({username:req.body.username}, req.body.password, function(err, user){
-
-<<<<<<< HEAD
-  if(err)
-  {
-    console.log(err);
-    res.redirect("/register");
-  }
-  else
-  {
-    passport.authenticate("local")(req,res, function()
-    {
-      res.redirect("/front");
+  if (req.isAuthenticated()) {
+    User.findOne({
+      _id: person.id
+    }, (err, data) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.render("profile", {
+          fname: data.fname,
+          lname: data.lname,
+          phone_nr: data.phone_nr,
+          email: data.email,
+          occupation: data.occupation,
+          address: data.address
+        });
+      }
 
     });
-  }
-
-});
-
-
-});
-
-
-
-app.get("/profile", function(req, res){
-  if(req.isAuthenticated())
-  {
-    res.render("profile");
-  }
-  else
-  {
-    res.redirect("/login");
+  } else {
+    res.redirect("/");
   }
 
 
 });
-=======
->>>>>>> 077e6a47c619573a5e15cc9588409642a8f7b03c
 
-app.get("/register", function(req, res){
+app.get("/edit", function(req, res) {
+  if (req.isAuthenticated()) {
+    res.render("edit");
+  } else {
+    res.redirect("/profile");
+  }
+});
+
+app.post("/edit", function(req, res) {
+
+
+  User.findOneAndUpdate({
+      _id: person.id
+    }, {
+      fname: req.body.fname,
+      lname: req.body.lname,
+      phone_nr: req.body.phone_nr,
+      email: req.body.email,
+      occupation: req.body.occupation,
+      address: req.body.address
+    },
+    null,
+    function(err) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.redirect("/profile")
+      }
+
+    });
+
+
+});
+
+
+/////////////////////////////////////REGISTERATION PAGE////////////////////////////////////////////
+app.get("/register", function(req, res) {
 
   res.render("register");
 });
 
+app.post("/register", function(req, res) {
+
+  person.email = req.body.username;
+
+  User.register({
+    username: req.body.username
+  }, req.body.password, function(err, user) {
+
+    if (err) {
+      console.log(err);
+      res.redirect("/register");
+    } else {
+
+
+
+      passport.authenticate("local")(req, res, function() {
+
+        User.findOne({
+          username: person.email
+        }, (err, data) => {
+          if (err) {
+            console.log(err);
+          } else {
+            person.id = data._id
+          }
+
+        });
+
+        res.redirect("/front");
+
+      });
+    }
+
+  });
+
+
+});
+
 
 //**********************************LOGIN PAGE*********************//
-app.get("/login", function(req, res){
+app.get("/login", function(req, res) {
   res.render("login");
 });
 
 
-app.post("/login",function(req,res){
-<<<<<<< HEAD
+app.post("/login", function(req, res) {
 
   const user = new User({
-    username:req.body.username,
-    password:req.body.password
+    username: req.body.username,
+    password: req.body.password
   });
 
 
-req.login(user,function(err){
-  if(err)
-  {
-    res.redirect("/register");
-  }
-  else
-  {
-    passport.authenticate("local")(req,res,function(){
-      res.redirect("/front");
-    });
+  req.login(user, function(err) {
+    if (err) {
+      res.redirect("/");
+    } else {
+      person.email = req.body.username;
+      User.findOne({
+        username: req.body.username
+      }, (err, data) => {
+        if (err) {
+          console.log(err);
+        } else {
+          person.id = data._id
+        }
+
+      });
+
+      passport.authenticate("local")(req, res, function() {
+        res.redirect("/front");
+      });
 
 
-  }
-})
-  // User.findOne({email:username},function(err,foundUser){
-  //   if(err)
-  //   {
-  //     console.log(err)
-  //   }
-  //   else
-  //   {
-  //     if(foundUser)
-  //      {
-  //        if(bcrypt.compareSync(password,foundUser.password))
-  //        {
-  //          res.redirect("/front");
-  //        }
-  //        else
-  //        {
-  //          res.redirect("/")
-  //        }
-  //      }
-  //      else
-  //      {
-  //        res.redirect("/register")
-  //      }
-  //   }
-  // })
+    }
+  })
+
 });
 
-=======
-  const Username=req.body.username;
-  const Password=req.body.password;
-
-
-  var req_userData=User.findOne({email: Username});
-
-console.log("fetched data is"+req_userData._id);
-
-    if(req_userData.password==Password)
-    {
-      res.send("login succesful");
-
-        //res.redirect("");                 //takes to welcome page
-    }
-    else{
-        res.send("either of the entries are incorrect try again,else if new user hit the signup button");
-        
-                    
-    }
-    
-    });
-    
-    
-    
-// HOME GET
->>>>>>> 077e6a47c619573a5e15cc9588409642a8f7b03c
-app.get("/", function(req, res){
-
+app.get("/", function(req, res) {
+  person.email = 'NULL';
+  person.googleId = 'NULL'; //initializing 'person' named, js object members with NULL value.
   res.render("home");
 });
 
 app.get("/auth/google",
-  passport.authenticate("google", { scope: ["profile"] })
+  passport.authenticate("google", {
+    scope: ["profile"]
+  })
 );
 
 app.get("/auth/google/secrets",
-  passport.authenticate("google", { failureRedirect: "/login" }),
+  passport.authenticate("google", {
+    failureRedirect: "/"
+  }),
   function(req, res) {
-    // Successful authentication, redirect home.
     res.redirect("/front");
   });
-
-//*********************************HOME PAGE*******************************//
-app.get("/front", function(req, res){
-
-  if(req.isAuthenticated()){
-
-    Blog.find(function(err,blogItems){
-    if(!err)
-    {
-
-          res.render("front", {
-          startingContent: homeStartingContent,
-          posts:blogItems
-          });
-
-    }
-    else{
-      console.log(err);
-        }
-
-  });
-
-  }
-  else
-  {
-    res.redirect("/login");
-  }
-
-
-});
 
 app.get("/logout", function(req, res, next) {
   req.logout(function(err) {
     if (err) {
       return next(err);
-      }
+    }
     res.redirect("/");
   });
 });
 
 
-app.get("/about", function(req, res){
-  if(req.isAuthenticated())
-  {
-    res.render("about", {aboutContent: aboutContent});
-  }
-  else
-  {
-    res.redirect("/login");
+//*********************************First page after logging*******************************//
+app.get("/front", function(req, res) {
+
+  if (req.isAuthenticated()) {
+
+    Blog.find(function(err, blogItems) {
+      if (!err) {
+
+        res.render("front", {
+          startingContent: homeStartingContent,
+          posts: blogItems
+        });
+
+      } else {
+        console.log(err);
+      }
+
+    });
+
+  } else {
+    res.redirect("/");
   }
 
 
 });
 
-app.get("/contact", function(req, res){
-  if(req.isAuthenticated())
-  {
-    res.render("contact", {contactContent: contactContent});
-  }
-  else
-  {
-    res.redirect("/login");
+
+app.get("/about", function(req, res) {
+  if (req.isAuthenticated()) {
+    res.render("about", {
+      aboutContent: aboutContent
+    });
+  } else {
+    res.redirect("/");
   }
 
 
 });
 
+app.get("/contact", function(req, res) {
+  if (req.isAuthenticated()) {
+    res.render("contact", {
+      contactContent: contactContent
+    });
+  } else {
+    res.redirect("/");
+  }
 
-app.get("/Qcompose", function(req, res){
-  res.render("Qcompose");
+
+});
+
+////////////////////////////////////////////////BLOG/////////////////////////////////////////
+
+app.get("/compose", function(req, res) {
+  res.render("compose");
+});
+
+app.post("/compose", function(req, res) {
+  const post = new Post({
+    title: req.body.posttitle,
+    username: person.email,
+    content: req.body.postcom,
+  });
+  post.save(function(err) {
+    if (!err) {
+      res.redirect("/blog");
+    }
+  });
+});
+
+app.get("/blog", function(req, res) {
+  Post.find({}, function(err, posts) {
+    res.render("blog", {
+      post: posts
+    });
+  })
+});
+
+app.get("/posts/:title", function(req, res) {
+  const requestedPosttitle = req.params.title;
+  //console.log("this is requested post id"+ requestedPosttitle);
+  Post.findOne({
+    title: requestedPosttitle
+  }, function(err, post) {
+    res.render("post", {
+      title: post.title,
+      username: post.username,
+      content: post.content,
+      doc: post.doc
+    });
+  });
 });
 
 
-app.post("/Qcompose", function(req, res){
+//////////////////////////////////////////QUESTION & ANSWER////////////////////////////////
+app.get("/question", function(req, res) {
 
-  const post = new Blog({
-    title: _.capitalize(req.body.postTitle),
-    content: req.body.postBody
+  if (req.isAuthenticated()) {
+    Question.find(function(err, questionItems) {
+      if (!err) {
+
+        res.render("question", {
+          questions: questionItems
+        });
+
+      } else {
+        console.log(err);
+      }
+
+    });
+  } else {
+    res.redirect("/");
+  }
+
+
+});
+
+app.get("/ask_q", function(req, res) {
+  res.render("ask_q");
+});
+
+
+app.post("/ask_q", function(req, res) {
+
+  const newquestion = new Question({
+    question: req.body.question,
+    ask_id: person.id
   });
 
-  post.save(function(err){
-    if(err){
+  newquestion.save(function(err) {
+    if (err) {
       console.log(err);
     }
   });
 
 
-  res.redirect("/front");
+  res.redirect("/question");
 
 });
 
 
-//**************************USING EJS FOR DISPLAYING Q&A discretelty************************//
-app.get("/posts/:postName", function(req, res){
+app.get("/answer", function(req, res) {
+  res.render("answer");
+});
 
-  const requestedTitle = _.capitalize(req.params.postName);
 
-   Blog.findOne({title:requestedTitle}, function(err,blogItem){
+app.post("/answer", function(req, res) {
 
-   if(!err){
+  const newanswer = new Answer({
+    answer: req.body.answer,
+    answerer_id: person.id,
+    question_id: ques.id
+  });
 
-    if(blogItem)
-    {
-      res.render("post", {title: blogItem.title, content: blogItem.content});
+  newanswer.save(function(err) {
+    if (err) {
+      console.log(err);
     }
+  });
 
-   else{
-         console.log("NOT FOUND");
-       }
-  }
-  else{
-    console.log(err);
-  }
-});
+
+  res.redirect("/question"); //try to redirect to question via pp.get("/questions/:ques.id", function(req, res) {
 
 });
+
+app.get("/questions/:questionid", function(req, res) {
+
+  if (req.isAuthenticated()) {
+
+    const requestedTitle = req.params.questionid;
+
+    Question.findOne({
+      _id: requestedTitle
+    }, function(err, questionItem) {
+
+      if (!err) {
+
+        if (questionItem) {
+          ques.id = requestedTitle;
+          Answer.find({
+            question_id: requestedTitle
+          }, function(err, answerItems) {
+            if (!err) {
+
+              res.render("Qns", {
+                question: questionItem.question,
+                answers: answerItems
+              });
+
+
+            } else {
+              console.log(err);
+            }
+
+          });
+
+
+        } else {
+          console.log("NOT FOUND");
+        }
+      } else {
+        console.log(err);
+      }
+    });
+
+  } else {
+    res.redirect("/question");
+  }
+
+});
+
 
 //PORT USED AS SERVER
 // const port = process.env.PORT || 3000;

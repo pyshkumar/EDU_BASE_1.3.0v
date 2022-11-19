@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 
@@ -16,7 +18,7 @@
       </div>
         <ul class="nav navbar-nav navbar-right">
           <li id="front"><a href="/front">HOME</a></li>
-            <li id="front"><a href="/blog">BLOGS</a></li>
+          <li id="front"><a href="/question">Question Bank</a></li>
           <li id="about"><a href="/logout">LOGOUT</a></li>
         </ul>
     </div>
@@ -25,21 +27,17 @@
   <body>
     <div class="container">
 
-<!-- //////////////////////////////////////////////////////////////////////// -->
-
-<h1>COMPOSE</h1>
-<form class="" action="/compose" method="post">
-  <div class="form-group">
 
 
-  <label>TITLE</label>
-  <input class="form-control" type="text" name="posttitle" value="" placeholder="TITLE" autocomplete="off">
-  <label>POSTS</label>
-  <textarea class="form-control" name="postcom" rows="2" cols="15" placeholder="post" autocomplete="off"></textarea>
+<%# ///////////////////////////////////////////////////////////////////// %>
 
-  </div>
-    <button class="btn btn-primary" type="submit" name="publish">PUBLISH</button>
-    <!-- <label>DATE</label>
-    <input class="form-control" type="text" name="postusername" value="" placeholder="TITLE" autocomplete="off">  -->
-</form>
-<%- include("partials/footer.ejs") %>
+    <h1>Write the answer here</h1>
+    <form class="" action="/answer" method="post">
+      <div class="form-group">
+
+        <textarea class="form-control" name="answer" rows="5" cols="30"></textarea>
+      </div>
+      <button class="btn btn-primary" type="submit" name="button">Submit</button>
+    </form>
+
+<%- include("partials/footer"); -%>

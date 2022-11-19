@@ -1,0 +1,24 @@
+<%- include("partials/header.ejs") %>
+
+<h1>NEW NOTE</h1>
+<form class="" action="/notes" method="post">
+  <div class="form-group">
+
+
+  <label>TITLE</label>
+  <input class="form-control" type="text" name="title" value="" placeholder="TITLE" autocomplete="off">
+  <label>Description</label>
+  <textarea class="form-control" name="description" rows="2" cols="15" placeholder="post" autocomplete="off"></textarea>
+  </div>
+  <label for="category"> Category</label>
+<select id="category" name="category_id">
+  <% categories.forEach(function(category) { %>
+    <option value="<%= category._id %>"><%= category.title %></option>
+  <% }) %>
+</select>
+    <button class="btn btn-primary" type="submit" name="publish">ADD</button>
+    <!-- <label>DATE</label>
+    <input class="form-control" type="text" name="postusername" value="" placeholder="TITLE" autocomplete="off">  -->
+</form>
+
+<%- include("partials/footer.ejs") %>
