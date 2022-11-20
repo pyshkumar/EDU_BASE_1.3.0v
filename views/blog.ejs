@@ -2,57 +2,44 @@
 <html lang="en" dir="ltr">
 
 <head>
-  <meta charset="utf-8">
-  <title>EDU_BASE</title>
-  <meta charset="utf-8">
-  <script src="https://kit.fontawesome.com/805ebae564.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/bootstrap-social.css">
-  <link rel="stylesheet" href="/css/styles.css">
-  <nav class="navbar navbar-default">
-    <div class="container">
-      <div class="navbar-header">
-        <p class="navbar-brand">EDU_BASE</p>
-      </div>
-        <ul class="nav navbar-nav navbar-right">
-          <li id="front"><a href="/front">HOME</a></li>
-            <li id="front"><a href="/compose">Compose a Blog</a></li>
-          <li id="about"><a href="/logout">LOGOUT</a></li>
-        </ul>
-    </div>
-  </nav>
+    <meta charset="utf-8">
+    <title>EDU_BASE</title>
+    <meta charset="utf-8">
+    <script src="https://kit.fontawesome.com/805ebae564.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-social.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <p class="navbar-brand">EDU_BASE</p>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li id="front"><a href="/front">HOME</a></li>
+                <li id="front"><a href="/compose">Compose a Blog</a></li>
+                <li id="about"><a href="/logout">LOGOUT</a></li>
+            </ul>
+        </div>
+    </nav>
 
-  <body>
-    <div class="container">
+<body>
+<div class="container">
 
-<!-- //////////////////////////////////////////////////////////////////////// -->
-<h1>BLOGS </h1>
-
-<% post.forEach(function(posts) { %>
-  <div class="">
-    <h4>TITLE :</h4>
-<p><%= posts.title %></p>
-  </div>
-  <div class="">
-  <h4>AUTHOR :</h4>
-    <p> <%= posts.username %></p>
-  </div>
-<div class="">
-  <p><%= posts.content.substring(0,100)+"..." %>
+    <h1 class="">BLOGS</h1>
+    <% post.forEach(function(p) { %>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title"><%= p.title %></h4>
+                        <p class="card-text"><%= p.content.substring(0, 100) + "..." %></p>
+                        <p>Date:<%= p.doc %>  </p>
+                        <p>Created by: <%= p.username %></p>
+                        <a href="/posts/<%= p.title %>">READ MORE</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% }) %>
 </div>
-<div class="">
-  <a href="/posts/<%=posts.title %>">READ MORE</a>
-   </p>
-</div>
-<div class="">
-   <p>Date:<%= posts.doc %>  </p>
-</div>
-
- <p>Date:<%= posts.doc %>  </p>
-<% }) %>
-
-
-<% for(var i=0;i<post.length;i++){ %>
-<% console.log(post[i].title) %>
-<% } %>
 <%- include("partials/footer.ejs") %>

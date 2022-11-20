@@ -9,7 +9,7 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const findOrCreate = require("mongoose-findorcreate");
-
+const upload = require("./services/fileupload");
 const homeStartingContent = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum";
 
 const aboutContent = "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of de Finibus Bonorum et Malorum (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, Lorem ipsum dolor sit ame, comes from a line in section 1.10.32. "
@@ -22,6 +22,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+// app.use(upload.any())
 app.use(express.static("public"));
 
 app.use(session({
@@ -32,7 +33,8 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-
+const cors = require("cors");
+app.use(cors());
 mongoose.connect("mongodb://localhost:27017/blogdb1",{useNewUrlParser:true});
 const categoryschema={
   title:String
@@ -41,6 +43,7 @@ const Category = mongoose.model('Category',categoryschema);
 const noteschema={
   title:String,
   description:String,
+  fileUrl:String,
 category :{
       type:mongoose.Schema.Types.ObjectId,
       ref:'Category'
@@ -59,30 +62,23 @@ app.get("/newnote",function(req,res)
 {
   Category.find({},function(err,c)
   {
-    if (c) {console.log("Present categories", c);} else {console.log("Not present");}
-  for(var i=0;i<c.length;i++){
-   console.log(c[i])
-   }
     res.render("newnote",{categories:c});
   }
 )
 })
-app.post("/notes",function (req,res)
-{
-  console.log("this is catoegory fetching  : ",req.body.category_id);
+app.post("/notes", upload.single("file"), function (req,res) {
+      const note = new Note({
+        title: req.body.title,
+        description: req.body.description,
+        category: req.body.category_id,
+        fileUrl: req.file.location
+      })
+      note.save(function(err) {
+        if(!err) {
+          res.redirect("/notes");
+        }
+    })
 
-  const note=new Note({
-    title:req.body.title,
-    description:req.body.description,
-    category:req.body.category_id
-  })
-  note.save(function(err)
-{
-  if(!err)
-  {
-    res.redirect("/notes");
-  }
-})
 })
 const person = {
   email: "NULL",

@@ -13,8 +13,10 @@
     "node": "16.16.0"
   },
   "dependencies": {
+    "aws-sdk": "^2.1258.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.8",
     "express": "^4.16.3",
@@ -22,6 +24,8 @@
     "lodash": "^4.17.21",
     "mongoose": "^6.5.2",
     "mongoose-findorcreate": "^3.0.0",
+    "multer": "^1.4.5-lts.1",
+    "multer-s3": "^3.0.1",
     "nodemon": "^2.0.20",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",

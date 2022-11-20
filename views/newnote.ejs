@@ -1,7 +1,7 @@
 <%- include("partials/header.ejs") %>
 
 <h1>NEW NOTE</h1>
-<form class="" action="/notes" method="post">
+<form class="" action="/notes" method="post" enctype="multipart/form-data">
   <div class="form-group">
 
 
@@ -10,6 +10,8 @@
   <label>Description</label>
   <textarea class="form-control" name="description" rows="2" cols="15" placeholder="post" autocomplete="off"></textarea>
   </div>
+  <label for="file">Select a file:</label>
+<input class="form-control" type="file" id="file" name="file" >
   <label for="category"> Category</label>
 <select id="category" name="category_id">
   <% categories.forEach(function(category) { %>
