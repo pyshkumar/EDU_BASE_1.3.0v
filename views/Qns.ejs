@@ -17,8 +17,8 @@
       </div>
         <ul class="nav navbar-nav navbar-right">
           <li id="front"><a href="/front">HOME</a></li>
-          <li id="front"><a href="/Answer">Answer the Question</a></li>
-          <li id="front"><a href="/question">Question Bank</a></li>
+          <li id="front"><a href="/Answer">ANSWER THE QUESTION</a></li>
+          <li id="front"><a href="/question">QUESTION BANK</a></li>
           <li id="about"><a href="/logout">LOGOUT</a></li>
         </ul>
     </div>
@@ -30,13 +30,21 @@
 
 
 <%# ///////////////////////////////////////////////////////////////////// %>
-<h1>Question</h1>
-  <p><%=question%></p>
+<div class="container" style="background-color: white">
+<h1 style="font-size: 3em">Question</h1>
+  <p style="font-size: 1.35em",>☛<%=question%></p>
+</div>
+
+<div class="container" style="background-color:white">
 <h1>Answers</h1>
+</div>
+
   <% answers.forEach(function(answer){ %>
-    <p>
-    <%=answer.answer%>
+    <div class="container"style="background-color:white">
+    <p style="font-size: 1.2em">
+    ✎<%=answer.answer%>
     </p>
+    </div>
  <% }) %>
 
 <%- include("partials/footer"); -%>

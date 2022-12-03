@@ -36,7 +36,7 @@
               <input type="name" class="form-control" name="lname" autocomplete="off">
             </div>
             <div class="form-group">
-              <label for="email">email</label>
+              <label for="email">Email Address</label>
               <input type="email" class="form-control" name="email" autocomplete="off">
             </div>
             <div class="form-group">
@@ -45,11 +45,17 @@
             </div>
             <div class="form-group">
               <label for="number">Phone Number</label>
-              <input type="integer" class="form-control" name="phone_nr"autocomplete="off" >
+              <input type="integer" class="form-control" name="phone_nr"autocomplete="off"value="+91 " >
             </div>
             <div class="form-group">
-              <label for="Occupation"> occupation</label>
-              <input type="occupation" class="form-control" name="occupation"  >
+              <label for="Occupation">Occupation</label>
+              <input type="occupation" class="form-control" name="occupation"autocomplete="off" list="occupation">
+              <datalist id="occupation">
+             <option value="Mentor">
+             <option value="Student">
+             <option value="Software Engineer">
+             <option value="Developer">
+            </datalist>
             </div>
             <button type="submit" class="btn btn-primary">Save Changes</button>
           </form>

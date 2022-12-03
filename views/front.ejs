@@ -1,19 +1,19 @@
 
 <%- include("partials/header"); -%>
-    <h1>Home</h1>
-    <p> <%= startingContent %> </p>
+<div class="container">
+    <h1>Welcome to Edu_Base</h1>
+          <p style="font-size: 1.2em">👋Our team welocme you to the ever growing learners community!!</p>
+    </div>
+
+    <div class="container" style="background-color: white">
+        <h1>Important Notices</h1>
+              <p style="font-size: 1.2em">👂Now you can add pdf of the notes.</p>
+              <p style="font-size: 1.2em">👂The chatbot feature is gonna roll out real soon!!</p>
+              <p style="font-size: 1.2em">👂The session time-out bug had been rectified</p>
+        </div>
 
 
-  <%  posts.forEach(function(post){ %>
 
-    <h1><%=post.title%></h1>
-    <p>
-    <%=post.content.substring(0, 300) + " ..."%>
-    <a href="/posts/<%=post.title%>">Read More</a>
-    </p>
-
-
-    <% }) %>
 
 
 <%- include("partials/footer"); -%>

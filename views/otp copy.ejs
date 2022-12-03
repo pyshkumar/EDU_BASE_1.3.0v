@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>EDU_BASE</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <nav class="navbar navbar-default">
+    <div class="container">
+      <div class="navbar-header">
+        <p class="navbar-brand">EDU_BASE</p>
+      </div>
+    </div>
+  </nav>
+
+  <body>
+    <div class="container">
+
+<div class="container mt-5">
+  <h1>Enter the OTP</h1>
+
+  <div class="row">
+    <div class="col-sm-8">
+      <div class="card">
+        <div class="card-body">
+
+          <!-- Makes POST request to /login route -->
+          <form action="/login" method="POST">
+            <div class="form-group">
+              <label for="otp"></label>
+              <input type="number" maxlength="6" onkeyup="onKeyUpEvent(1, event)" onfocus="onFocusEvent(1)" class="form-control" name="otp">
+            </div>
+            <button type="submit" class="btn btn-dark">Submit</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+</div>
+
+<%- include('partials/footer') %>

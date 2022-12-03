@@ -10,11 +10,7 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const findOrCreate = require("mongoose-findorcreate");
 const upload = require("./services/fileupload");
-const homeStartingContent = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum";
-
-const aboutContent = "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of de Finibus Bonorum et Malorum (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, Lorem ipsum dolor sit ame, comes from a line in section 1.10.32. "
-
-const contactContent = "Phone Number: 918098776";
+const nodemailer = require('nodemailer')
 
 const app = express();
 
@@ -26,60 +22,25 @@ app.use(bodyParser.urlencoded({
 app.use(express.static("public"));
 
 app.use(session({
-  secret: "myexisbitch",
+  secret: "mynameiszeusZ  ", //changed
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: {
+    _expires: (60 * 60 * 1000)
+  }
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 const cors = require("cors");
 app.use(cors());
-mongoose.connect("mongodb://localhost:27017/blogdb1",{useNewUrlParser:true});
-const categoryschema={
-  title:String
-};
-const Category = mongoose.model('Category',categoryschema);
-const noteschema={
-  title:String,
-  description:String,
-  fileUrl:String,
-category :{
-      type:mongoose.Schema.Types.ObjectId,
-      ref:'Category'
-  }
-}
 
-const Note=mongoose.model("Note",noteschema);
-app.get("/notes",function(req,res)
-{
-  Note.find({}).populate('category').exec(function(err,notes)
-{
-    res.render("notes",{notes:notes});
-})
-})
-app.get("/newnote",function(req,res)
-{
-  Category.find({},function(err,c)
-  {
-    res.render("newnote",{categories:c});
-  }
-)
-})
-app.post("/notes", upload.single("file"), function (req,res) {
-      const note = new Note({
-        title: req.body.title,
-        description: req.body.description,
-        category: req.body.category_id,
-        fileUrl: req.file.location
-      })
-      note.save(function(err) {
-        if(!err) {
-          res.redirect("/notes");
-        }
-    })
+mongoose.connect("mongodb+srv://" + process.env.API_KEY + ".mongodb.net/eduBase");
+// mongoose.connect("mongodb://localhost:27017/blogdb2",{useNewUrlParser:true});
 
-})
+
+var genOtp = " "
+
 const person = {
   email: "NULL",
   googleId: "NULL",
@@ -91,6 +52,22 @@ const ques = {
 };
 
 //************************************************** SCHEMA'S***************************//
+const noteschema = {
+  title: String,
+  description: String,
+  fileUrl: String,
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category'
+  }
+}
+
+
+const categoryschema = {
+  title: String
+};
+
+
 const postSchema = {
   title: String,
   username: String,
@@ -192,6 +169,10 @@ const userSchema = new mongoose.Schema({
   doj: {
     type: Date,
     default: Date.now
+  },
+  admin: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -203,6 +184,8 @@ const Answer = mongoose.model("Answer", answerSchema);
 const Question = mongoose.model("Question", questionSchema);
 const Post = mongoose.model("POST", postSchema);
 const Blog = mongoose.model("Blog", blogSchema);
+const Category = mongoose.model('Category', categoryschema);
+const Note = mongoose.model("Note", noteschema);
 
 passport.use(User.createStrategy());
 
@@ -212,7 +195,8 @@ passport.serializeUser(function(user, cb) {
     return cb(null, {
       id: user.id,
       username: user.username,
-      picture: user.picture
+      picture: user.picture,
+      admin: user.admin
     });
   });
 });
@@ -339,7 +323,51 @@ app.post("/register", function(req, res) {
 
         });
 
-        res.redirect("/front");
+
+
+        var otp = generateOTP();
+        genOtp = otp.toString();
+        var msg_text = 'Hi user!\nYour otp to access EDU_BASE  is ' + otp + '\n\nThis OTP is confidential,please do not share it with any one else.\n\n\n\nRegards,Team EDU_BASE.'
+
+        var mailOptions = {
+          from: 'edubasejiit@gmail.com',
+          to: req.body.username,
+          subject: 'OTP for authourizing mail at EDU_BASE!!!',
+          text: msg_text
+        };
+        smptTransport.sendMail(mailOptions, function(error, info) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log('Email sent :' + info.response);
+
+
+          }
+        })
+
+
+
+        User.findOneAndUpdate({
+            username: req.body.username
+          }, {
+            fname: " ",
+            lname: " ",
+            phone_nr: " ",
+            email: req.body.username,
+            occupation: " ",
+            address: " "
+          },
+          null,
+          function(err) {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log('registration completed')
+            }
+
+          });
+
+        res.redirect("/otp");
 
       });
     }
@@ -364,6 +392,24 @@ app.post("/login", function(req, res) {
   });
 
 
+  var otp = generateOTP();
+  genOtp = otp.toString();
+  var msg_text = 'Hi user!\nYour otp to access EDU_BASE  is ' + otp + '\n\nThis OTP is confidential,please do not share it with any one else.\n\n\n\nRegards,Team EDU_BASE.'
+
+  var mailOptions = {
+    from: 'edubasejiit@gmail.com',
+    to: req.body.username,
+    subject: 'OTP for authourizing mail at EDU_BASE!!!',
+    text: msg_text
+  };
+  smptTransport.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent :' + info.response);
+
+    }
+  })
   req.login(user, function(err) {
     if (err) {
       res.redirect("/");
@@ -381,14 +427,50 @@ app.post("/login", function(req, res) {
       });
 
       passport.authenticate("local")(req, res, function() {
-        res.redirect("/front");
+        res.redirect("/otp");
       });
-
 
     }
   })
 
 });
+///////////////////////////////////OTP//////////////////////////////////////
+
+function generateOTP() {
+  var digits = '0123456789';
+  let OTP = '';
+  for (let i = 0; i < 4; i++) {
+    OTP += digits[Math.floor(Math.random() * 10)];
+  }
+  return OTP;
+}
+
+
+const smptTransport = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'edubasejiit@gmail.com',
+    pass: 'kegrcktkasiwdjgx'
+  }
+});
+
+
+app.get("/otp", function(req, res) {
+  res.render("otp");
+});
+app.post("/otp", function(req, res) {
+  if (req.body.otp == genOtp) {
+    res.redirect("/front");
+  } else {
+    res.send("incorrect otp")
+    req.logout(function(err) {
+      if (err) {
+        return next(err);
+      }
+
+    });
+  }
+})
 
 app.get("/", function(req, res) {
   person.email = 'NULL';
@@ -428,10 +510,7 @@ app.get("/front", function(req, res) {
     Blog.find(function(err, blogItems) {
       if (!err) {
 
-        res.render("front", {
-          startingContent: homeStartingContent,
-          posts: blogItems
-        });
+        res.render("front");
 
       } else {
         console.log(err);
@@ -449,9 +528,7 @@ app.get("/front", function(req, res) {
 
 app.get("/about", function(req, res) {
   if (req.isAuthenticated()) {
-    res.render("about", {
-      aboutContent: aboutContent
-    });
+    res.render("about");
   } else {
     res.redirect("/");
   }
@@ -461,9 +538,7 @@ app.get("/about", function(req, res) {
 
 app.get("/contact", function(req, res) {
   if (req.isAuthenticated()) {
-    res.render("contact", {
-      contactContent: contactContent
-    });
+    res.render("contact");
   } else {
     res.redirect("/");
   }
@@ -474,7 +549,12 @@ app.get("/contact", function(req, res) {
 ////////////////////////////////////////////////BLOG/////////////////////////////////////////
 
 app.get("/compose", function(req, res) {
-  res.render("compose");
+  if (req.isAuthenticated()) {
+    res.render("compose");
+  } else {
+    res.redirect("/");
+  }
+
 });
 
 app.post("/compose", function(req, res) {
@@ -491,26 +571,53 @@ app.post("/compose", function(req, res) {
 });
 
 app.get("/blog", function(req, res) {
-  Post.find({}, function(err, posts) {
-    res.render("blog", {
-      post: posts
-    });
-  })
+  if (req.isAuthenticated()) {
+
+    Post.find({}, function(err, posts) {
+      res.render("blog", {
+        post: posts
+      });
+    })
+  } else {
+    res.redirect("/");
+  }
+
 });
 
 app.get("/posts/:title", function(req, res) {
-  const requestedPosttitle = req.params.title;
-  //console.log("this is requested post id"+ requestedPosttitle);
-  Post.findOne({
-    title: requestedPosttitle
-  }, function(err, post) {
-    res.render("post", {
-      title: post.title,
-      username: post.username,
-      content: post.content,
-      doc: post.doc
+
+  if (req.isAuthenticated()) {
+
+    const requestedPosttitle = req.params.title;
+    //console.log("this is requested post id"+ requestedPosttitle);
+    Post.findOne({
+      title: requestedPosttitle
+    }, function(err, post) {
+      db.User.aggregate(
+        [{
+          $project: {
+            yearMonthDayUTC: {
+              $dateToString: {
+                format: "%Y-%m-%d",
+                doj: "$date"
+              }
+            },
+
+          }
+        }]
+      )
+      res.render("post", {
+        title: post.title,
+        username: post.username,
+        content: post.content,
+        doc: post.doc
+      });
     });
-  });
+
+  } else {
+    res.redirect("/");
+  }
+
 });
 
 
@@ -534,11 +641,17 @@ app.get("/question", function(req, res) {
     res.redirect("/");
   }
 
-
 });
 
 app.get("/ask_q", function(req, res) {
-  res.render("ask_q");
+
+  if (req.isAuthenticated()) {
+    res.render("ask_q");
+
+  } else {
+    res.redirect("/");
+  }
+
 });
 
 
@@ -562,7 +675,12 @@ app.post("/ask_q", function(req, res) {
 
 
 app.get("/answer", function(req, res) {
-  res.render("answer");
+  if (req.isAuthenticated()) {
+    res.render("answer");
+  } else {
+    res.redirect("/");
+  }
+
 });
 
 
@@ -581,7 +699,7 @@ app.post("/answer", function(req, res) {
   });
 
 
-  res.redirect("/question"); //try to redirect to question via pp.get("/questions/:ques.id", function(req, res) {
+  res.redirect("/question");
 
 });
 
@@ -630,7 +748,52 @@ app.get("/questions/:questionid", function(req, res) {
   }
 
 });
+/////////////////////////////////////study material////////////////////////////
 
+app.get("/notes", function(req, res) {
+  if (req.isAuthenticated()) {
+
+    Note.find({}).populate('category').exec(function(err, notes) {
+      res.render("notes", {
+        notes: notes,
+        user: req.user
+      });
+    })
+
+  } else {
+    res.redirect("/");
+  }
+
+})
+app.get("/newnote", function(req, res) {
+  if (req.isAuthenticated() && req.user && req.user.admin) {
+
+    Category.find({}, function(err, c) {
+      res.render("newnote", {
+        categories: c
+      });
+    })
+
+  } else {
+    res.redirect("/notes");
+  }
+
+})
+app.post("/notes", upload.single("file"), function(req, res) {
+
+  const note = new Note({
+    title: req.body.title,
+    description: req.body.description,
+    category: req.body.category_id,
+    fileUrl: req.file.location
+  })
+  note.save(function(err) {
+    if (!err) {
+      res.redirect("/notes");
+    }
+  });
+
+})
 
 //PORT USED AS SERVER
 // const port = process.env.PORT || 3000;

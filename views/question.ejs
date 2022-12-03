@@ -7,7 +7,9 @@
   <title>EDU_BASE</title>
   <meta charset="utf-8">
   <script src="https://kit.fontawesome.com/805ebae564.js" crossorigin="anonymous"></script>
+
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
   <link rel="stylesheet" href="css/bootstrap-social.css">
   <link rel="stylesheet" href="/css/styles.css">
   <nav class="navbar navbar-default">
@@ -17,7 +19,7 @@
       </div>
         <ul class="nav navbar-nav navbar-right">
           <li id="front"><a href="/front">HOME</a></li>
-          <li id="front"><a href="/ask_q">Ask a Question</a></li>
+          <li id="front"><a href="/ask_q">ASK A QUESTION</a></li>
           <li id="about"><a href="/logout">LOGOUT</a></li>
         </ul>
     </div>
@@ -29,19 +31,26 @@
 
 
 <%# ///////////////////////////////////////////////////////////////////// %>
-    <h1>Question Bank</h1>
+<div class="container">
+  <h1 style="font-size: 3em">Questions Bank</h1>
+</div>
+
+  <div class="container">
+
 
     <%  questions.forEach(function(question){ %>
 
+     <div class="container" style="background-color: white">
 
-        <p>
-        <%=question.question.substring(0, 300) + " ..."%>
-        <a href="/questions/<%=question._id%>">Click for Answers</a>
+
+        <p style="font-size: 1.35em">
+        ☛<%=question.question.substring(0, 300)+"..."  %>
+        <a style="font-size: 1em" href="/questions/<%=question._id%>"> Answers➥</a>
         </p>
 
-
+      </div>
         <% }) %>
 
-
+</div>
 
 <%- include("partials/footer"); -%>

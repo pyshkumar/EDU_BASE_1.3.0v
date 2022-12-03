@@ -4,9 +4,11 @@
         <div class="col-8">
             <h1>NOTES</h1>
         </div>
-        <div class="col-4">
-            <a role="button" href="/newnote" class="btn btn-primary ml-auto">New Note</a>
-        </div>
+        <% if (user && user.admin) { %>
+            <div class="col-4">
+                <a role="button" href="/newnote" class="btn btn-primary ml-auto">New Note</a>
+            </div>
+        <% }%>
     </div>
 
 
