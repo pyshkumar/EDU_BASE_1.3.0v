@@ -1,2 +1,2 @@
 # EDU_BASE_1.3.0v
-Minor Project-I
+A plarform for the the ever growing learners community.
